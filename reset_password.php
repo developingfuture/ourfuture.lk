@@ -1,3 +1,51 @@
+<?php 
+
+$con = mysqli_connect("localhost","root","","ujps"); ?>
+
+
+    
+
+    <?php 
+
+    if(isset($_GET['token'])){
+        $token = mysqli_real_escape_string($con, $_GET['token']);
+         $mail = mysqli_real_escape_string($con, $_GET['email']);
+        $query = "select * from password_reset where token='$token'";
+        $run = mysqli_query($con,$query);
+        if(mysqli_num_rows($run)>0){
+            $row = mysqli_fetch_array($run);
+            $token = $row['token'];
+            $email = $row['email'];
+        }
+    }
+
+if(isset($_POST['submit'])){
+    $password = mysqli_real_escape_string($con, $_POST['new_password']);
+    
+    $confirmpassword = mysqli_real_escape_string($con, $_POST['confirm_password']);
+    
+    if($password!=$confirmpassword){
+        $msg = "<div class='alert alert-danger'>Sorry. Password didn't matched</div>";
+    }elseif(strlen($password)<6){
+         
+        $msg = "<div class='alert alert-danger'>Password must be 6 characters long</div>";
+                             
+    }
+    
+    
+    else{
+        
+        $query = "update user set password='$password' where email='$email'";
+        mysqli_query($con,$query);
+        $query = "delete from password_reset where email='$email'";
+        mysqli_query($con,$query);
+        $msg = "<div class='alert alert-success'>Password Updated</div>";
+    }
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,13 +63,21 @@
                     <form method="post" enctype="multipart/form-data">
                         <h3>Reset Your Password</h3>
                         <div class="form-group">
-                            <input type="password" class="form-control" name="new_password" placeholder="Enter New Password">
+                            <input type="text" readonly class="form-control" name="e" value="<?php echo $mail; ?>">
                         </div>
                         <div class="form-group">
-                            <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password">
+                            <input type="password" class="form-control" name="new_password" placeholder="Enter New Password" required>
+                            
+                            
                         </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password" required>
+                        </div>
+                        
+                        <?php if(isset($msg)){echo $msg;} ?>
+                        
                         <div class="button">
-                            <button class="form-control">Reset Password</button>
+                            <button type="submit" name="submit" class="form-control">Reset Password</button>
                         </div>
                     </form>              
                 </div>            
@@ -48,3 +104,4 @@
         background-color: dodgerblue;
     }
 </style>
+
