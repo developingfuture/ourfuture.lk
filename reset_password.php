@@ -37,7 +37,7 @@ if(isset($_POST['submit'])){
         
         $query = "update user set password='$password' where email='$email'";
         mysqli_query($con,$query);
-        $query = "delete from password_reset where email='$email'";
+        $query = "delete * from password_reset where email='$email'";
         mysqli_query($con,$query);
         $msg = "<div class='alert alert-success'>Password Updated</div>";
     }
