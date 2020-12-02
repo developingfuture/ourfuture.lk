@@ -4,6 +4,8 @@ $con = mysqli_connect("localhost","root","","ujps"); ?>
 
 <?php
 
+$msg = "";
+
 if(isset($_POST['submit'])){
   $email=mysqli_real_escape_string($con,$_POST['email']);
   $query="select * from user where email='$email'";
@@ -19,13 +21,14 @@ if(isset($_POST['submit'])){
     if(mysqli_query($con,$query)){
       $to = $db_email;
       $subject = "Password reset link";
-      $message="Click <a href='https://website.com/reset.php?token=$token'>here to reset Your Password.";
+      $message="Click <a href='http://localhost/ujps/reset_password.php?token=$token&email=$email'>here to reset Your Password.";
       $headers = 'From: <lakshanisandareka96@gmail.com>'. "\r\n";
-      mail($to,$subject,$message,$headers);
-      $msg= "<div class='alert alert-success'>Password reset link has been sent to the email.</div>";
+      (mail($to,$subject,$message,$headers));
+    
+      $msg = "<div class='alert alert-success'>Password reset link has been sent to the email.</div>";
     }
   }else{
-   $msg= "<div class='alert alert-danger'>User not found</div>";
+   $msg = "<div class='alert alert-danger'>User not found</div>";
   }
 }
 
@@ -45,20 +48,25 @@ if(isset($_POST['submit'])){
     <div class="container">
   
     <div class="row">
-    <div class="col">
-
-    <div class="text-center"><h2>Froget Password</h2></div>
+    <div class="col text-center">
     
-    <form action="forgetpassword.php" method="post" style="padding:20px 50px;">
+  <div class="box" style="margin-top:50px; box-shadow: 2px 2px 12px rgba(47,47,47,0.40);">
+
+    <div class="text-center"><h2  style="padding-top:50px;">Froget Password</h2></div>
+    
+    <form action="forgetpassword.php" method="post" style="padding:50px 50px;">
   <div class="form-group">
     <label><b>Enter Your Email address</b></label>
     <input type="email" class="form-control" name="email">
     <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
   </div>
   <?php echo $msg; ?>
-  <button name="submit" class="btn btn-primary">Get Code</button>
+  
+  <button name="submit" class="btn btn-primary btn-block">Get Code</button>
 </form>
 </div><!--row-->
+       </div><!--box-->
+       
     </div><!--col-->
 
     </div>
@@ -67,4 +75,6 @@ if(isset($_POST['submit'])){
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
+
 
